@@ -15,13 +15,19 @@ repred = '#FE5C40'
 demblu = '#3571C0'
 
 def get_unemployment(csvr):
-  data = {}
+  dates = []
+  rates = []
   for row in csvr:
-    year = row['year']
-    rate = row['12']
-    data[year] = rate
+    try:
+      year = float(row['Year'])
+      rate = float(row['12'])
 
-  return data
+      dates.append(year)
+      rates.append(rate)
+    except Exception as e:
+      pass
+
+  return dates, rates
 
 def get_presidents(csvr):
   president_dict = {}
@@ -64,18 +70,22 @@ def get_xticks(years, presidents):
 
   return xticks
 
-years = get_years()
-dates, rates = get_tax(tax_csvr)
-presidents = get_presidents(presidents_csvr)
 
+
+years = get_years()
+tax_dates, tax_rates = get_tax(tax_csvr)
+presidents = get_presidents(presidents_csvr)
+unp_dates, unp_rates = get_unemployment(unemployment_csvr)
 xticks = get_xticks(years, presidents)
 
 
-tax_range = [0, max(rates)]
+tax_range = [0, max(tax_rates)]
 
-fig, ax = plt.subplots()
+#fig, ax = plt.subplots()
 
-ax.plot(dates, rates, color='black')
+plt.plot(tax_dates, tax_rates, color='black')
+plt.plot(unp_dates, unp_rates, color='black')
+
 plt.xticks(years, xticks, rotation=70, horizontalalignment='right', verticalalignment='top')
 plt.subplots_adjust(bottom=0.4, right=0.95)
 
